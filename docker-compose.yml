@@ -9,7 +9,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./database-service/data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bharathraj -d tokka-labs-db"]
       interval: 20s
@@ -18,7 +18,7 @@ services:
 
   backend-server:
     build:
-      context: ../backendSystem
+      context: ./backendSystem
       args:
         - no_cache=1
     depends_on:
@@ -37,7 +37,7 @@ services:
 
   price-feeder-server:
     build:
-      context: ../externalPriceFeeder
+      context: ./externalPriceFeeder
       args:
         - no_cache=1
     ports:
@@ -57,4 +57,4 @@ services:
     ports:
       - "6379:6379"
 volumes:
-  pgdata: "./database-service/data"
+  pgdata:
