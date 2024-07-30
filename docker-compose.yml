@@ -1,0 +1,60 @@
+version: "3"
+services:
+  central-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: bharathraj
+      POSTGRES_PASSWORD: yesitsme
+      POSTGRES_DB: tokka-labs-db
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bharathraj -d tokka-labs-db"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+
+  backend-server:
+    build:
+      context: ../backendSystem
+      args:
+        - no_cache=1
+    depends_on:
+      - central-db
+    ports:
+      - "3003:3000"
+    environment:
+      DB_HOST: central-db
+      DB_USER: bharathraj
+      DB_PASSWORD: yesitsme
+      DB_NAME: tokka-labs-db
+      DB_PORT: 5432
+      DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
+      NODE_ENV: docker
+      SERVER_PORT: 3000
+
+  price-feeder-server:
+    build:
+      context: ../externalPriceFeeder
+      args:
+        - no_cache=1
+    ports:
+      - "3004:3000"
+    environment:
+      DB_HOST: central-db
+      DB_USER: bharathraj
+      DB_PASSWORD: yesitsme
+      DB_NAME: tokka-labs-db
+      DB_PORT: 5432
+      DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
+      NODE_ENV: docker
+      SERVER_PORT: 3000
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+volumes:
+  pgdata: "./database-service/data"
