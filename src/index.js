@@ -13,12 +13,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const apiRoutes = require("./routes/api");
+const apiDocsRoutes = require('./routes/apiDocs.js');
 
 app.use("/health", (req, res) => {
   res.send("Healthy!");
 });
 
 app.use("/api", apiRoutes);
+app.use('/api-docs', apiDocsRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hey Raj this side! Welcome to the API");
