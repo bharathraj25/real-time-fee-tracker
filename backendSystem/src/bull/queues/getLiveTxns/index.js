@@ -1,4 +1,9 @@
+const { Queue, Worker } = require("bullmq");
 const { redisConnection, retryMechanism } = require("..common/common");
+const { v4: uuidv4 } = require("uuid");
+const { keyBuilder } = require("../../../redis/keyBuilder");
+const { setRedisKey, getRedisKey } = require("../../../redis");
+const getLatestBlockNumber = require("../../../utils/getLatestBlockNumber");
 
 const getLiveTxnsQueue = new Queue("getLiveTxns", {
   ...redisConnection,

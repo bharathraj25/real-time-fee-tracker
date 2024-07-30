@@ -1,3 +1,4 @@
+const { Queue, Worker } = require("bullmq");
 const etherscanService = require("../../../utils/etherscanService");
 const { redisConnection, retryMechanism } = require("..common/common");
 
