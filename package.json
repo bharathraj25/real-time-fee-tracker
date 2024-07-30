@@ -1,0 +1,12 @@
+{
+  "name": "assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "docker-compose -f ./docker-compose.yml up --build -d"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
