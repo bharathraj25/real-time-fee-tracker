@@ -1,4 +1,4 @@
-const { REDIS_PORT, REDIS_HOST } = require("../../config");
+const { REDIS_PORT, REDIS_HOST } = require("./config");
 
 const redisConnection = {
   connection: {

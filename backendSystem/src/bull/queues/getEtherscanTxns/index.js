@@ -1,6 +1,10 @@
 const { Queue, Worker, QueueEvents } = require("bullmq");
 const etherscanService = require("../../../utils/etherscanService");
-const { redisConnection, retryMechanism, rateLimiter } = require("../common");
+const {
+  redisConnection,
+  retryMechanism,
+  rateLimiter,
+} = require("../../../common");
 
 const getTxnsFromEtherscanQueueName = "getTxnsFromEtherscan";
 
