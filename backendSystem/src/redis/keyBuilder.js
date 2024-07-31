@@ -1,3 +1,5 @@
+const { symbol } = require("joi");
+
 const keyPrefixBuilder = (poolAddress, chain = "eth", network = "mainnet") => {
   return `${chain}:${network}:${poolAddress}`;
 };
@@ -25,4 +27,13 @@ const historyKeyBuilder = (
   )}:history:${startBlock}:${endBlock}`;
 };
 
-module.exports = { keyBuilder, keyPrefixBuilder, historyKeyBuilder };
+const priceTimestampKeyBuilder = (symbol, timestamp) => {
+  return `${symbol}:${timestamp}:price`;
+};
+
+module.exports = {
+  keyBuilder,
+  keyPrefixBuilder,
+  historyKeyBuilder,
+  priceTimestampKeyBuilder,
+};

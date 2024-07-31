@@ -37,24 +37,24 @@ services:
     networks:
       - common-network
 
-  price-feeder-server:
-    build:
-      context: ./externalPriceFeeder
-      args:
-        - no_cache=1
-    ports:
-      - "3004:3000"
-    environment:
-      DB_HOST: central-db
-      DB_USER: bharathraj
-      DB_PASSWORD: yesitsme
-      DB_NAME: tokka-labs-db
-      DB_PORT: 5432
-      DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
-      NODE_ENV: docker
-      SERVER_PORT: 3000
-    networks:
-      - common-network
+  # price-feeder-server:
+  #   build:
+  #     context: ./externalPriceFeeder
+  #     args:
+  #       - no_cache=1
+  #   ports:
+  #     - "3004:3000"
+  #   environment:
+  #     DB_HOST: central-db
+  #     DB_USER: bharathraj
+  #     DB_PASSWORD: yesitsme
+  #     DB_NAME: tokka-labs-db
+  #     DB_PORT: 5432
+  #     DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
+  #     NODE_ENV: docker
+  #     SERVER_PORT: 3000
+  #   networks:
+  #     - common-network
 
 networks:
   common-network:

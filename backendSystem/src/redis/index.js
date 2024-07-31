@@ -2,7 +2,11 @@ const client = require("./client");
 
 async function setRedisKey(key, value, expirationInSeconds = null) {
   try {
-    await client.set(key, value);
+    if (expirationInSeconds !== null) {
+      await client.set(key, value, "EX", expirationInSeconds);
+    } else {
+      await client.set(key, value);
+    }
     console.log(`Key "${key}" set successfully.`);
   } catch (error) {
     console.error(`Error setting key "${key}":`, error);

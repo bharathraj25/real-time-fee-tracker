@@ -1,5 +1,9 @@
 const { Job, Queue, QueueEvents, Worker } = require("bullmq");
-const { redisConnection, retryMechanism, rateLimiter } = require("../common");
+const {
+  redisConnection,
+  retryMechanism,
+  rateLimiter,
+} = require("../../../common");
 const { v4: uuidv4 } = require("uuid");
 const { keyBuilder } = require("../../../redis/keyBuilder");
 const { setRedisKey, getRedisKey } = require("../../../redis");
