@@ -1,7 +1,8 @@
 const { Web3 } = require("web3");
+const { moralisAppId } = require("../config");
 
 // Replace with a public RPC URL from a service like Alchemy or any other public Ethereum node provider
-const rpcUrl = "https://eth-mainnet.alchemyapi.io/v2/demo";
+const rpcUrl = `https://site1.moralis-nodes.com/eth/${moralisAppId}`;
 
 // console.log(new Web3.providers.http.HttpProvider(rpcUrl));
 // Create a new Web3 instance
