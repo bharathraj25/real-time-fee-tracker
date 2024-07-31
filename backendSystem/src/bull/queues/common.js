@@ -18,7 +18,15 @@ const retryMechanism = {
   },
 };
 
+const rateLimiter = {
+  limiter: {
+    max: 2,
+    duration: 10000,
+  },
+};
+
 module.exports = {
   redisConnection,
   retryMechanism,
+  rateLimiter,
 };

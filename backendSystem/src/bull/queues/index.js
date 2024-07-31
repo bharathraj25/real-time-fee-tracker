@@ -1,6 +1,8 @@
 const {
-  getHistoricalTxnsQueue,
-  getHistoricalTxnsWorker,
+  getHistoricalTxnsParentQueue,
+  getHistoricalTxnsParentWorker,
+  getHistoricalTxnsChildQueue,
+  getHistoricalTxnsChildWorker,
 } = require("./getHistoricalTxns");
 const {
   getTxnsFromEtherscanQueue,
@@ -8,9 +10,15 @@ const {
 } = require("./getEtherscanTxns");
 const { getLiveTxnsQueue, getLiveTxnsWorker } = require("./getLiveTxns");
 
+// getHistoricalTxnsWorker.run();
+// getTxnsFromEtherscanWorker.run();
+// getLiveTxnsWorker.run();
+
 module.exports = {
-  getHistoricalTxnsQueue,
-  getHistoricalTxnsWorker,
+  getHistoricalTxnsParentQueue,
+  getHistoricalTxnsParentWorker,
+  getHistoricalTxnsChildQueue,
+  getHistoricalTxnsChildWorker,
   getTxnsFromEtherscanQueue,
   getTxnsFromEtherscanWorker,
   getLiveTxnsQueue,

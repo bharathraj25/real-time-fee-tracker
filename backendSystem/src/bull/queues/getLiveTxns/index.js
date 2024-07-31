@@ -1,9 +1,14 @@
 const { Queue, Worker } = require("bullmq");
-const { redisConnection, retryMechanism } = require("..common/common");
+const { redisConnection, retryMechanism, rateLimiter } = require("../common");
 const { v4: uuidv4 } = require("uuid");
-const { keyBuilder } = require("../../../redis/keyBuilder");
+const { keyBuilder, historyKeyBuilder } = require("../../../redis/keyBuilder");
 const { setRedisKey, getRedisKey } = require("../../../redis");
 const getLatestBlockNumber = require("../../../utils/getLatestBlockNumber");
+const { getHistoricalTxnsParentQueue } = require("../getHistoricalTxns");
+const {
+  getTxnsFromEtherscanQueue,
+  getTxnsFromEtherscanQueueEvent,
+} = require("../getEtherscanTxns");
 
 const getLiveTxnsQueue = new Queue("getLiveTxns", {
   ...redisConnection,
@@ -14,11 +19,20 @@ const getLiveTxnsWorker = new Worker(
   "getLiveTxns",
   async (job) => {
     let { poolAddress } = job.data;
+    const parentJobId = job.id;
+    const parentJobName = job.name;
+    // setting a key value for name to id mapping
+    await setRedisKey(parentJobName, parentJobId);
+
     let latestBlock = await getLatestBlockNumber();
+    job.log(`Latest block number is ${latestBlock}`);
     const lastBlockKey = keyBuilder(poolAddress, "lastBlock");
     let lastBlock = await getRedisKey(lastBlockKey);
     lastBlock = lastBlock ? Number(lastBlock) : 0;
     let diff = latestBlock - lastBlock;
+
+    job.log(`Last block key is ${lastBlockKey}`);
+    job.log(`diff is ${diff}`);
 
     // check if there is historical data to fetch
     if (diff > 0) {
@@ -29,51 +43,64 @@ const getLiveTxnsWorker = new Worker(
         hStartBlock,
         hEndBlock
       );
+      job.log(`History job key is ${historyJobKey}`);
 
       await setRedisKey(historyJobKey, hStartBlock);
-      getHistoricalTxnsQueue.add(historyJobKey, {
-        poolAddress,
-        startBlock: hStartBlock,
-        endBlock: hEndBlock,
-      });
+      //   await getHistoricalTxnsParentQueue.add(historyJobKey, {
+      //     poolAddress,
+      //     startBlock: hStartBlock,
+      //     endBlock: hEndBlock,
+      //   });
     }
 
     let hasMoreData = true;
     let startBlock = latestBlock;
 
     while (hasMoreData) {
-      const jobKey = keyBuilder(poolAddress, uuidv4());
-      const txns = await getTxnsFromEtherscanQueue.add(
-        jobKey,
+      //await for 20 seconds sort of polling
+      await new Promise((resolve) => setTimeout(resolve, 20000));
+
+      const txnJobName = keyBuilder(poolAddress, uuidv4());
+      const txnJob = await getTxnsFromEtherscanQueue.add(
+        txnJobName,
         {
           poolAddress,
           startBlock,
         },
-        { priority: 1, delay: 10000 }
+        { priority: 1 }
+      );
+
+      // Wait for the triggered txnjob to complete and get the result
+      const txnResult = await txnJob.waitUntilFinished(
+        getTxnsFromEtherscanQueueEvent
+      );
+
+      job.log(
+        `Here are the txns status: ${txnResult.status} - ${txnResult.message}`
       );
       let latestBlock = await getLatestBlockNumber();
       job.updateProgress((Number(startBlock) / latestBlock) * 100);
 
-      if (txns.status == "1") {
-        await setRedisKey(job.id, lastBlock);
-        startBlock = txns.result[txns.result.length - 1].blockNumber;
+      if (txnResult.status == "1") {
+        await setRedisKey(lastBlockKey, lastBlock);
+        startBlock = txnResult.result[txnResult.result.length - 1].blockNumber;
         job.updateProgress((startBlock / latestBlock) * 100);
-        job.log(`Here are the txns - ${txns}`);
+        job.log(`Here are the txns - ${JSON.stringify(txnResult)}`);
         continue;
       }
 
-      if (txns.status == "0") {
-        if (txns.message == "No transactions found") {
+      if (txnResult.status == "0") {
+        if (txnResult.message == "No transactions found") {
           job.updateProgress(100);
           job.log("No transactions found");
         } else {
-          throw new Error(txns);
+          throw new Error(txnResult);
         }
       }
     }
-    console.log(`Job ${job.id} added to queue.`);
+    console.log(`Job ${job.name} added to queue.`);
   },
-  redisConnection
+  { ...redisConnection, ...rateLimiter }
 );
 
 module.exports = {

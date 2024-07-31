@@ -1,14 +1,16 @@
-const { Queue, Worker } = require("bullmq");
+const { Queue, Worker, QueueEvents } = require("bullmq");
 const etherscanService = require("../../../utils/etherscanService");
-const { redisConnection, retryMechanism } = require("..common/common");
+const { redisConnection, retryMechanism, rateLimiter } = require("../common");
 
-const getTxnsFromEtherscanQueue = new Queue("getTxnsFromEtherscan", {
+const getTxnsFromEtherscanQueueName = "getTxnsFromEtherscan";
+
+const getTxnsFromEtherscanQueue = new Queue(getTxnsFromEtherscanQueueName, {
   ...redisConnection,
   ...retryMechanism,
 });
 
 const getTxnsFromEtherscanWorker = new Worker(
-  "getTxnsFromEtherscan",
+  getTxnsFromEtherscanQueueName,
   async (job) => {
     const { poolAddress, startBlock, endBlock, page, offset, sort } = job.data;
 
@@ -20,14 +22,21 @@ const getTxnsFromEtherscanWorker = new Worker(
       offset,
       sort
     );
-    job.log(`Here are the txns - ${txns}`);
-    done(null, txns);
+    job.log(`Here are the txns - ${page} ${offset}  ${txns}`);
     return txns;
   },
-  redisConnection
+  { ...redisConnection, ...rateLimiter }
+);
+
+const getTxnsFromEtherscanQueueEvent = new QueueEvents(
+  getTxnsFromEtherscanQueueName,
+  {
+    ...redisConnection,
+  }
 );
 
 module.exports = {
   getTxnsFromEtherscanQueue,
   getTxnsFromEtherscanWorker,
+  getTxnsFromEtherscanQueueEvent,
 };
