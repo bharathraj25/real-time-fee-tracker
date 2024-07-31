@@ -56,32 +56,6 @@ services:
     networks:
       - common-network
 
-  bullq-board-server:
-    build:
-      context: ./bullmq-board
-      args:
-        - no_cache=1
-    ports:
-      - "3008:3000"
-    depends_on:
-      - redis
-    environment:
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_DB: 0
-      REDIS_URL: "redis://redis:6379"
-      NODE_ENV: docker
-      SERVER_PORT: 3000
-    networks:
-      - common-network
-
-  redis:
-    image: redis:latest
-    ports:
-      - "6379:6379"
-    networks:
-      - common-network
-
 networks:
   common-network:
 
