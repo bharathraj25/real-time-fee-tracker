@@ -7,7 +7,7 @@ const getAllJobs = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const getJobDetails = async (req, res) => {
   try {
@@ -17,7 +17,7 @@ const getJobDetails = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const deleteJob = async (req, res) => {
   try {
@@ -27,17 +27,17 @@ const deleteJob = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 const startJob = async (req, res) => {
   try {
-    const job = await jobService.startJob();
+    const { poolAddress } = req.body;
+    const job = await jobService.startJob(poolAddress);
     res.status(200).json(job);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
-
+};
 
 module.exports = {
   getAllJobs,
