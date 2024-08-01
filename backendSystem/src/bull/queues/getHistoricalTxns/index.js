@@ -3,6 +3,7 @@ const {
   redisConnection,
   retryMechanism,
   rateLimiter,
+  stalledCountOpts,
 } = require("../../../common");
 const { v4: uuidv4 } = require("uuid");
 const { keyBuilder } = require("../../../redis/keyBuilder");
@@ -98,7 +99,7 @@ const getHistoricalTxnsChildWorker = new Worker(
       const nextPage = page + 1;
       let maxWindowmReached = false;
       txnResult.result[txnResult.result.length - 1].blockNumber;
-      if (nextPage * offset > ETHERSCAN_MAX_WINDOW) {
+      if (nextPage * offset >= ETHERSCAN_MAX_WINDOW) {
         job.log(`Reached the maximum window size of ${ETHERSCAN_MAX_WINDOW}`);
         maxWindowmReached = true;
       }
@@ -113,7 +114,7 @@ const getHistoricalTxnsChildWorker = new Worker(
       await parentJob.moveToCompleted("done", true);
     }
   },
-  { ...redisConnection, ...rateLimiter }
+  { ...redisConnection, ...rateLimiter, ...stalledCountOpts }
 );
 
 const getHistoricalTxnsParentQueueName = "getHistoricalTxnsParent";

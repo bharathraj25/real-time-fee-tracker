@@ -1,3 +1,4 @@
+const { getRedisKey } = require("../../redis");
 const { priceTimestampKeyBuilder } = require("../../redis/keyBuilder");
 const { getPriceFromBinanceSpot } = require("./apiService");
 const { roundTimestamp, cachePrices } = require("./cacheService");
@@ -12,14 +13,19 @@ const getClosePrice = async (
   const cacheKey = priceTimestampKeyBuilder(symbol, timestamp);
 
   // Check Redis cache
-  const cachedPrice = await redisClient.get(cacheKey);
+  const cachedPrice = await getRedisKey(cacheKey);
+
   if (cachedPrice) {
     return parseFloat(cachedPrice);
   }
 
   // If not in cache, fetch from API
   try {
-    const data = await getPriceFromBinanceSpot(symbol, timestamp, interval);
+    const data = await getPriceFromBinanceSpot(
+      symbol,
+      roundedTimestamp,
+      interval
+    );
 
     // Cache all prices
     await cachePrices(symbol, data);
