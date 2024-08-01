@@ -8,7 +8,7 @@ const {
 const { v4: uuidv4 } = require("uuid");
 const { keyBuilder, historyKeyBuilder } = require("../../../redis/keyBuilder");
 const { setRedisKey, getRedisKey } = require("../../../redis");
-const getLatestBlockNumber = require("../../../utils/getLatestBlockNumber");
+const { getLatestBlockNumber } = require("../../../utils/web3Services");
 const { getHistoricalTxnsParentQueue } = require("../getHistoricalTxns");
 const {
   getTxnsFromEtherscanQueue,
@@ -37,7 +37,6 @@ const getLiveTxnsWorker = new Worker(
     let diff = latestBlock - lastBlock;
 
     job.log(`Last block key is ${lastBlockKey}`);
-    job.log(`diff is ${diff}`);
 
     // check if there is historical data to fetch
     if (diff > 0) {
@@ -104,7 +103,6 @@ const getLiveTxnsWorker = new Worker(
         }
       }
     }
-    console.log(`Job ${job.name} added to queue.`);
   },
   { ...redisConnection, ...rateLimiter, ...stalledCountOpts }
 );

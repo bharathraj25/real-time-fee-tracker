@@ -36,14 +36,7 @@ const getHistoricalTxnsChildWorker = new Worker(
       parentJobName,
     } = job.data;
 
-    job.log(
-      "Processing historical transactions",
-      poolAddress,
-      updatedStartBlock,
-      endBlock,
-      page,
-      offset
-    );
+    job.log("Processing historical transactions");
 
     let hasMoreData = true;
 

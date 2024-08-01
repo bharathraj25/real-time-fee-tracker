@@ -22,7 +22,7 @@ const persistTxnsWorker = new Worker(
 
     // interact with the database
     // persist txnData and price
-    await createTransaction(
+    const txn = await createTransaction(
       chainId,
       poolAddress,
       txnData.txnHash,
@@ -31,6 +31,7 @@ const persistTxnsWorker = new Worker(
       parseFloat(price),
       txnData.timeStamp
     );
+    job.log(`Transaction created: ${txn}`);
 
     // job done
     return true;
