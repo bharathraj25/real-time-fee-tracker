@@ -16,30 +16,25 @@ const getClosePrice = async (
   const cachedPrice = await getRedisKey(cacheKey);
 
   if (cachedPrice) {
-    return parseFloat(cachedPrice);
+    return parseFloat(cachedPrice).toFixed(2);
   }
 
   // If not in cache, fetch from API
-  try {
-    const data = await getPriceFromBinanceSpot(
-      symbol,
-      roundedTimestamp,
-      interval
-    );
+  const data = await getPriceFromBinanceSpot(
+    symbol,
+    roundedTimestamp,
+    interval
+  );
 
-    // Cache all prices
-    await cachePrices(symbol, data);
+  // Cache all prices
+  await cachePrices(symbol, data);
 
-    // Return the price for the rounded timestamp
-    const roundedClosePrice = data.find((item) => item[0] === roundedTimestamp);
-    if (!roundedClosePrice) {
-      throw new Error("Price not found for the given timestamp");
-    }
-    return parseFloat(roundedClosePrice[4]).toFixed(2);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw new Error("Internal Server Error");
+  // Return the price for the rounded timestamp
+  const roundedClosePrice = data.find((item) => item[0] === roundedTimestamp);
+  if (!roundedClosePrice) {
+    throw new Error("Price not found for the given timestamp");
   }
+  return parseFloat(roundedClosePrice[4]).toFixed(2);
 };
 
 module.exports = { getClosePrice };
