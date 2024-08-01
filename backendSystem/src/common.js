@@ -25,8 +25,13 @@ const rateLimiter = {
   },
 };
 
+const stalledCountOpts = {
+  maxStalledCount: 10,
+};
+
 module.exports = {
   redisConnection,
   retryMechanism,
   rateLimiter,
+  stalledCountOpts,
 };

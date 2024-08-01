@@ -9,6 +9,9 @@ const { createBullBoard } = require("@bull-board/api");
 const { BullMQAdapter } = require("@bull-board/api/bullMQAdapter");
 const { ExpressAdapter } = require("@bull-board/express");
 
+const apiRoutes = require("./routes/api/index.js");
+const apiDocsRoutes = require("./routes/apiDocs.js");
+
 require("dotenv").config();
 
 const app = express();
@@ -20,6 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 
 redisClient.connect();
 
+// ---- Bull Board ----
+
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath("/admin/queues");
 
@@ -29,14 +34,15 @@ const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
     new BullMQAdapter(bullmq.getHistoricalTxnsParentQueue),
     new BullMQAdapter(bullmq.getLiveTxnsQueue),
     new BullMQAdapter(bullmq.getTxnsFromEtherscanQueue),
+    new BullMQAdapter(bullmq.persistTxnsQueue),
+    new BullMQAdapter(bullmq.priceFeedQueue),
   ],
   serverAdapter: serverAdapter,
 });
 
 app.use("/admin/queues", serverAdapter.getRouter());
 
-const apiRoutes = require("./routes/api/index.js");
-const apiDocsRoutes = require("./routes/apiDocs.js");
+// ---
 
 app.use("/health", (req, res) => {
   res.send("Healthy!");
