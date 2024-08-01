@@ -4,6 +4,7 @@ const { PORT } = require("./config.js");
 var cors = require("cors");
 const redisClient = require("./redis/client.js");
 const bullmq = require("./bull/queues");
+const { errorHandlingMiddleware } = require("./middlewares");
 
 const { createBullBoard } = require("@bull-board/api");
 const { BullMQAdapter } = require("@bull-board/api/bullMQAdapter");
@@ -54,6 +55,9 @@ app.use("/api-docs", apiDocsRoutes);
 app.get("/", (req, res) => {
   res.send("Hey Raj this side! Welcome to the API");
 });
+
+// Error handling middleware
+app.use(errorHandlingMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
