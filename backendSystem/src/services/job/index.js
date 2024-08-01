@@ -36,7 +36,7 @@ const deleteJob = async (jobId) => {
 
 const startJob = async (poolAddress) => {
   const jobId = keyPrefixBuilder(poolAddress);
-  const job = getLiveTxnsQueue.add(jobId, {
+  const job = await getLiveTxnsQueue.add(jobId, {
     poolAddress,
   });
   return job;
