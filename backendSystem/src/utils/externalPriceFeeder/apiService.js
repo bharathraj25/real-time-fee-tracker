@@ -1,5 +1,6 @@
+const axios = require("axios");
 // will cahce extra 20 mins of data for future use
-const nextMinsCaching = 20;
+// const nextMinsCaching = 10;
 
 const getPriceFromBinanceSpot = async (symbol, timestamp, interval = "1s") => {
   try {
@@ -8,7 +9,7 @@ const getPriceFromBinanceSpot = async (symbol, timestamp, interval = "1s") => {
         symbol,
         interval,
         startTime: timestamp,
-        limit: nextMinsCaching * 60,
+        limit: 600,
       },
     });
     return response.data;

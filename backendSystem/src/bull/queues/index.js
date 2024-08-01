@@ -9,6 +9,8 @@ const {
   getTxnsFromEtherscanWorker,
 } = require("./getEtherscanTxns");
 const { getLiveTxnsQueue, getLiveTxnsWorker } = require("./getLiveTxns");
+const { persistTxnsQueue, persistTxnsWorker } = require("./persistTxns");
+const { priceFeedQueue, priceFeedWorker } = require("./priceFeeder");
 
 // getHistoricalTxnsWorker.run();
 // getTxnsFromEtherscanWorker.run();
@@ -23,4 +25,8 @@ module.exports = {
   getTxnsFromEtherscanWorker,
   getLiveTxnsQueue,
   getLiveTxnsWorker,
+  persistTxnsQueue,
+  persistTxnsWorker,
+  priceFeedQueue,
+  priceFeedWorker,
 };
