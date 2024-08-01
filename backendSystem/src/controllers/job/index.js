@@ -1,47 +1,58 @@
 const jobService = require("../../services/job");
 
-const getAllJobs = async (req, res) => {
+const getAllJobs = async (req, res, next) => {
   try {
     const jobs = await jobService.getAllJobs();
     res.status(200).json(jobs);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const getJobDetails = async (req, res) => {
+const getJobDetailsByName = async (req, res, next) => {
   try {
-    const jobId = req.params.jobId;
-    const job = await jobService.getJobDetails(jobId);
+    const jobName = req.params.jobName;
+    const job = await jobService.getJobDetailsByName(jobName);
     res.status(200).json(job);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const deleteJob = async (req, res) => {
+const getJobDetailsById = async (req, res, next) => {
+  try {
+    const jobId = req.params.jobId;
+    const job = await jobService.getJobDetailsById(jobId);
+    res.status(200).json(job);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteJob = async (req, res, next) => {
   try {
     const jobId = req.params.jobId;
     await jobService.deleteJob(jobId);
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
-const startJob = async (req, res) => {
+const startJob = async (req, res, next) => {
   try {
     const { poolAddress } = req.body;
     const job = await jobService.startJob(poolAddress);
     res.status(200).json(job);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    next(error);
   }
 };
 
 module.exports = {
   getAllJobs,
-  getJobDetails,
+  getJobDetailsByName,
+  getJobDetailsById,
   deleteJob,
   startJob,
 };
