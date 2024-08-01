@@ -14,20 +14,30 @@ const createTransaction = async (
     // Convert epoch timestamp to Date object
     const txnDate = new Date(txnTimestamp * 1000); // Convert seconds to milliseconds
 
-    const transaction = await prisma.transaction.create({
-      data: {
-        chainId,
-        poolAddress,
-        txnHash,
-        priceInUSDT,
-        priceInETH,
-        ethPriceAt,
-        txnTimestamp: txnDate,
+    const txnDataToStore = {
+      chainId,
+      poolAddress,
+      txnHash,
+      priceInUSDT,
+      priceInETH,
+      ethPriceAt,
+      txnTimestamp: txnDate,
+    };
+    const transaction = await prisma.transaction.upsert({
+      where: {
+        chainId_txnHash: {
+          // Assuming you have a composite unique constraint on txnHash and chainId
+          chainId,
+          txnHash,
+        },
       },
+      create: txnDataToStore,
+      update: txnDataToStore,
     });
-    // console.log("Transaction created:", transaction);
+
+    return transaction;
   } catch (error) {
-    console.error("Error creating transaction:", error);
+    throw new Error(`Error creating transaction: ${error.message}`);
   }
 };
 
