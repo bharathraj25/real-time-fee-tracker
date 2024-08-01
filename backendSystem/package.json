@@ -10,7 +10,9 @@
     "lint:fix": "eslint . --fix",
     "dbtest": "node ./src/dbHealthCheck.js",
     "migrate": "cd prisma && npx prisma migrate dev --skip-seed && npx prisma generate",
-    "generate": "cd prisma && npx prisma generate"
+    "generate": "cd prisma && npx prisma generate",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose"
   },
   "keywords": [],
   "author": "",
@@ -41,5 +43,25 @@
     "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0",
     "web3": "^4.11.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/controllers",
+      "src/controllers/**",
+      "src/services",
+      "src/services/**",
+      "!src/generated/**",
+      "src/utils",
+      "src/utils/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 70,
+        "functions": 70,
+        "lines": 70,
+        "statements": 70
+      }
+    }
   }
 }
