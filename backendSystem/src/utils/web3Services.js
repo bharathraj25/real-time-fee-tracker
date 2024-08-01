@@ -33,7 +33,8 @@ const decodeTransactionLogs = async (contractAddress, txnHash) => {
 
   const tokenSwapLogs = decodedLogs.filter((log) => {
     return (
-      log.address == String(contractAddress).toLowerCase() && log.name == "Swap"
+      String(log.address).toLowerCase() ==
+        String(contractAddress).toLowerCase() && log.name == "Swap"
     );
   });
 

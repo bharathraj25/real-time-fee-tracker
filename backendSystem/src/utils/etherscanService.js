@@ -9,23 +9,19 @@ const etherscanService = async (
   offset = null,
   sort = "asc"
 ) => {
-  try {
-    const requestUrlParams = [
-      "https://api.etherscan.io/api",
-      "?module=account",
-      "&action=tokentx",
-      `&address=${poolAddress}`,
-      page ? `&page=${page}` : "",
-      offset ? `&offset=${offset}` : "",
-      `&startblock=${startBlock}`,
-      endBlock ? `&endblock=${endBlock}` : "",
-      `&sort=${sort}`,
-      `&apikey=${etherscanApiKey}`,
-    ];
-    const response = await axios.get(requestUrlParams.join(""));
-    return response.data;
-  } catch (error) {
-    throw error.message;
-  }
+  const requestUrlParams = [
+    "https://api.etherscan.io/api",
+    "?module=account",
+    "&action=tokentx",
+    `&address=${poolAddress}`,
+    page ? `&page=${page}` : "",
+    offset ? `&offset=${offset}` : "",
+    `&startblock=${startBlock}`,
+    endBlock ? `&endblock=${endBlock}` : "",
+    `&sort=${sort}`,
+    `&apikey=${etherscanApiKey}`,
+  ];
+  const response = await axios.get(requestUrlParams.join(""));
+  return response.data;
 };
 module.exports = etherscanService;

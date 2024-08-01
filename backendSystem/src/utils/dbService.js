@@ -1,3 +1,4 @@
+const { describe, it, expect } = require("@jest/globals");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -35,7 +36,7 @@ const createTransaction = async (
       update: txnDataToStore,
     });
 
-    return transaction;
+    return true;
   } catch (error) {
     throw new Error(`Error creating transaction: ${error.message}`);
   }
