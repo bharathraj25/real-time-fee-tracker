@@ -7,7 +7,10 @@
     "start": "node src/index.js",
     "dev": "nodemon src",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "dbtest": "node ./src/dbHealthCheck.js",
+    "migrate": "cd prisma && npx prisma migrate dev --skip-seed && npx prisma generate",
+    "generate": "cd prisma && npx prisma generate"
   },
   "keywords": [],
   "author": "",
