@@ -23,4 +23,6 @@ model Transaction {
   priceInETH    Float
   ethPriceAt    Float
   createdAt     DateTime @default(now())
+
+  @@unique([chainId, txnHash])
 }

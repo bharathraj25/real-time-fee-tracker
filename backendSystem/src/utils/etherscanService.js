@@ -22,9 +22,7 @@ const etherscanService = async (
       `&sort=${sort}`,
       `&apikey=${etherscanApiKey}`,
     ];
-    console.log(requestUrlParams.join(""));
     const response = await axios.get(requestUrlParams.join(""));
-    console.log(response.status);
     return response.data;
   } catch (error) {
     throw error.message;

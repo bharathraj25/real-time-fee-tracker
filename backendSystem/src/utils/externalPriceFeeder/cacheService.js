@@ -7,7 +7,6 @@ const REDIS_EXPIRATION = 24 * 60 * 60; // 24 hours
 
 const roundTimestamp = (timestamp, roundOffFlag) => {
   const date = moment(timestamp);
-  console.log(timestamp, " >> ", date);
   if (roundOffFlag === "min") {
     return date.startOf("minute").valueOf();
   } else if (roundOffFlag === "sec") {
