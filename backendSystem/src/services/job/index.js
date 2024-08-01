@@ -1,6 +1,7 @@
-const { QueueGetters } = require("bullmq");
 const { keyPrefixBuilder } = require("../../redis/keyBuilder");
 const { getLiveTxnsQueue } = require("../../bull/queues");
+const { HttpError } = require("../../errors");
+const { getRedisKey } = require("../../redis");
 
 // Initiate all the services for job
 const getAllJobs = async (status = "active") => {
@@ -9,16 +10,26 @@ const getAllJobs = async (status = "active") => {
   return jobs;
 };
 
-const getJobDetails = async (jobId) => {
+const getJobDetailsByName = async (jobName) => {
+  const jobId = await getRedisKey(jobName);
+  if (!jobId) {
+    throw new HttpError(404, "Job not found");
+  }
+  return await getJobDetailsById(jobId);
+};
+
+const getJobDetailsById = async (jobId) => {
   const job = await getLiveTxnsQueue.getJob(jobId);
-  console.log(job);
+  if (!job) {
+    throw new HttpError(404, "Job not found");
+  }
   return job;
 };
 
 const deleteJob = async (jobId) => {
-  const job = await getJobDetails(jobId);
+  const job = await getJobDetailsById(jobId);
   if (!job) {
-    throw new Error("Job not found");
+    throw new HttpError(404, "Job not found");
   }
   await job.remove();
 };
@@ -33,7 +44,8 @@ const startJob = async (poolAddress) => {
 
 module.exports = {
   getAllJobs,
-  getJobDetails,
+  getJobDetailsByName,
+  getJobDetailsById,
   deleteJob,
   startJob,
 };
