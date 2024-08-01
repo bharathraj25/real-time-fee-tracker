@@ -60,9 +60,9 @@ describe("getExchangePrice", () => {
     expect(result).toEqual({
       txnSpecific: {
         tokenIn: "TOKEN0",
-        tokenInAmount: 10000000000,
+        tokenInAmount: 1e-8,
         tokenOut: "TOKEN1",
-        tokenOutAmount: 500000,
+        tokenOutAmount: 0.5,
         price: 50000000, // (1000 / 500) * (10^6 - 10^18) = 2
         description: `Swaped with an exchange rate of 1 TOKEN1 = 2e-8 TOKEN0`,
       },
