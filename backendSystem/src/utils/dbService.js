@@ -1,4 +1,3 @@
-const { describe, it, expect } = require("@jest/globals");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 

@@ -48,13 +48,13 @@ const getExchangePrice = async (contractAddress, txnHash) => {
     const result = {
       txnSpecific: {
         tokenIn: tokenIn,
-        tokenInAmount: Math.abs(
-          tokenIn == token0Symbol ? token0Amount : token1Amount
-        ),
+        tokenInAmount:
+          Math.abs(tokenIn == token0Symbol ? token0Amount : token1Amount) /
+          10 ** (tokenIn == token0Symbol ? token0Decimals : token1Decimals),
         tokenOut: tokenIn == token0Symbol ? token1Symbol : token0Symbol,
-        tokenOutAmount: Math.abs(
-          tokenIn == token0Symbol ? token1Amount : token0Amount
-        ),
+        tokenOutAmount:
+          Math.abs(tokenIn == token0Symbol ? token1Amount : token0Amount) /
+          10 ** (tokenIn == token0Symbol ? token1Decimals : token0Decimals),
         price: tokenIn == token0Symbol ? token0Value : token1Value,
         description: `Swaped with an exchange rate of 1 ${token1Symbol} = ${token1Value} ${token0Symbol}`,
       },
