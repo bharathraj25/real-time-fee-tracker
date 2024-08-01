@@ -3,6 +3,7 @@ const {
   redisConnection,
   retryMechanism,
   rateLimiter,
+  stalledCountOpts,
 } = require("../../../common");
 const { v4: uuidv4 } = require("uuid");
 const { keyBuilder, historyKeyBuilder } = require("../../../redis/keyBuilder");
@@ -70,6 +71,7 @@ const getLiveTxnsWorker = new Worker(
         {
           poolAddress,
           startBlock,
+          isLive: true,
         },
         { priority: 1 }
       );
@@ -86,8 +88,8 @@ const getLiveTxnsWorker = new Worker(
       job.updateProgress((Number(startBlock) / latestBlock) * 100);
 
       if (txnResult.status == "1") {
-        await setRedisKey(lastBlockKey, lastBlock);
         startBlock = txnResult.result[txnResult.result.length - 1].blockNumber;
+        await setRedisKey(lastBlockKey, Number(startBlock) - 1);
         job.updateProgress((startBlock / latestBlock) * 100);
         job.log(`Here are the txns - ${JSON.stringify(txnResult)}`);
         continue;
@@ -104,7 +106,7 @@ const getLiveTxnsWorker = new Worker(
     }
     console.log(`Job ${job.name} added to queue.`);
   },
-  { ...redisConnection, ...rateLimiter }
+  { ...redisConnection, ...rateLimiter, ...stalledCountOpts }
 );
 
 module.exports = {

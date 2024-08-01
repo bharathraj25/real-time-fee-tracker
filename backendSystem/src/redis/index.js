@@ -7,7 +7,7 @@ async function setRedisKey(key, value, expirationInSeconds = null) {
     } else {
       await client.set(key, value);
     }
-    console.log(`Key "${key}" set successfully.`);
+    // console.log(`Key "${key}" set successfully.`);
   } catch (error) {
     console.error(`Error setting key "${key}":`, error);
   }

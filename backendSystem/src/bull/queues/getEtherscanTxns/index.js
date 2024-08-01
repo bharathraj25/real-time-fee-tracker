@@ -4,7 +4,9 @@ const {
   redisConnection,
   retryMechanism,
   rateLimiter,
+  stalledCountOpts,
 } = require("../../../common");
+const { priceFeedQueue } = require("../priceFeeder");
 
 const getTxnsFromEtherscanQueueName = "getTxnsFromEtherscan";
 
@@ -16,9 +18,10 @@ const getTxnsFromEtherscanQueue = new Queue(getTxnsFromEtherscanQueueName, {
 const getTxnsFromEtherscanWorker = new Worker(
   getTxnsFromEtherscanQueueName,
   async (job) => {
-    const { poolAddress, startBlock, endBlock, page, offset, sort } = job.data;
-
-    const txns = await etherscanService(
+    const { poolAddress, startBlock, endBlock, page, offset, sort, isLive } =
+      job.data;
+    const jobName = job.name;
+    const txnsRes = await etherscanService(
       poolAddress,
       startBlock,
       endBlock,
@@ -26,10 +29,35 @@ const getTxnsFromEtherscanWorker = new Worker(
       offset,
       sort
     );
-    job.log(`Here are the txns - ${page} ${offset}  ${txns}`);
-    return txns;
+    job.log(`Here are the txns - ${page} ${offset}  ${txnsRes}`);
+
+    if (txnsRes.status == "1") {
+      job.log(`txns status is 1`);
+      const priority = isLive ? 1 : 10;
+      const interval = isLive ? "1s" : "1s";
+
+      job.log(`Adding txns to priceFeedQueue`);
+
+      // add new jobs to priceFeedQueue to calculate txn fee in usdt
+      const priceFeedJobPrefix = `${jobName}:priceFeed`;
+      await priceFeedQueue.addBulk(
+        txnsRes.result.map((txn) => ({
+          name: `${priceFeedJobPrefix}:${txn.hash}`,
+          data: {
+            poolAddress,
+            symbol: "ETHUSDT",
+            interval,
+            txnData: txn,
+            txnJobName: jobName,
+          },
+          opts: { priority },
+        }))
+      );
+    }
+
+    return txnsRes;
   },
-  { ...redisConnection, ...rateLimiter }
+  { ...redisConnection, ...rateLimiter, ...stalledCountOpts }
 );
 
 const getTxnsFromEtherscanQueueEvent = new QueueEvents(
