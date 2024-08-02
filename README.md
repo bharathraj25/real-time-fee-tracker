@@ -112,7 +112,7 @@ Finally, to start collecting transactions of any Uniswap V3 pools, follow these 
 
 - **Prisma Studio**: View DB records at [http://localhost:5555/](http://localhost:5555/)
 - **API Documentation**: Access Swagger UI at [http://localhost:3003/api-docs/](http://localhost:3003/api-docs/)
-- **Bull Board UI**: Manage jobs and view their status at [http://localhost:3001/admin/queues](http://localhost:3001/admin/queues)
+- **Bull Board UI**: Manage jobs and view their status at [http://localhost:3003/admin/queues](http://localhost:3003/admin/queues)
 
 **NOTE: These above links may differ according to your docker compose configurations.**
 
