@@ -33,7 +33,7 @@ const getTxnsFromEtherscanWorker = new Worker(
 
     if (txnsRes.status == "1") {
       job.log(`txns status is 1`);
-      const priority = isLive ? 1 : 10;
+      const priority = 10;
       const interval = isLive ? "1s" : "1s";
 
       job.log(`Adding txns to priceFeedQueue`);
@@ -50,7 +50,7 @@ const getTxnsFromEtherscanWorker = new Worker(
             txnData: txn,
             txnJobName: jobName,
           },
-          opts: { priority },
+          opts: isLive ? {} : { priority },
         }))
       );
     }

@@ -1,0 +1,16 @@
+FROM node:19-alpine
+
+WORKDIR /app
+
+# Copy dependencies
+COPY package*.json ./
+
+# Copy app
+COPY . .
+
+# Install dependencies
+RUN npm install
+RUN npm run generate
+
+# Run prisma studio
+ENTRYPOINT ["npx", "prisma", "studio"]

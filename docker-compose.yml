@@ -15,6 +15,20 @@ services:
       interval: 20s
       timeout: 5s
       retries: 5
+    networks:
+      - common-network
+
+  backend-db-migration:
+    build:
+      context: ./backendSystem
+      dockerfile: Dockerfile.migration
+    depends_on:
+      central-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
+    networks:
+      - common-network
 
   backend-server:
     build:
@@ -23,6 +37,7 @@ services:
         - no_cache=1
     depends_on:
       - central-db
+      - redis
     ports:
       - "3003:3000"
     environment:
@@ -33,6 +48,8 @@ services:
       DB_PORT: 5432
       DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
       NODE_ENV: docker
+      REDIS_PORT: 6379
+      REDIS_HOST: redis
       SERVER_PORT: 3000
     networks:
       - common-network
@@ -55,6 +72,27 @@ services:
   #     SERVER_PORT: 3000
   #   networks:
   #     - common-network
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - common-network
+
+  prisma-studio:
+    build:
+      context: ./backendSystem
+      dockerfile: Dockerfile.prismaStudio
+    depends_on:
+      central-db:
+        condition: service_healthy
+    ports:
+      - "5555:5555"
+    environment:
+      DATABASE_URL: "postgresql://bharathraj:yesitsme@central-db:5432/tokka-labs-db?schema=public"
+    networks:
+      - common-network
 
 networks:
   common-network:
