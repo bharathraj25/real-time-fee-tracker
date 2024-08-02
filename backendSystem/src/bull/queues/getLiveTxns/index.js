@@ -39,7 +39,7 @@ const getLiveTxnsWorker = new Worker(
     job.log(`Last block key is ${lastBlockKey}`);
 
     // check if there is historical data to fetch
-    if (diff > 0) {
+    if (diff > 100) {
       let hStartBlock = lastBlock;
       let hEndBlock = latestBlock;
       const historyJobKey = historyKeyBuilder(
@@ -50,11 +50,13 @@ const getLiveTxnsWorker = new Worker(
       job.log(`History job key is ${historyJobKey}`);
 
       await setRedisKey(historyJobKey, hStartBlock);
-      //   await getHistoricalTxnsParentQueue.add(historyJobKey, {
-      //     poolAddress,
-      //     startBlock: hStartBlock,
-      //     endBlock: hEndBlock,
-      //   });
+      await getHistoricalTxnsParentQueue.add(historyJobKey, {
+        poolAddress,
+        startBlock: hStartBlock,
+        endBlock: hEndBlock,
+      });
+    } else {
+      latestBlock = lastBlock;
     }
 
     let hasMoreData = true;
@@ -65,15 +67,11 @@ const getLiveTxnsWorker = new Worker(
       await new Promise((resolve) => setTimeout(resolve, 20000));
 
       const txnJobName = keyBuilder(poolAddress, uuidv4());
-      const txnJob = await getTxnsFromEtherscanQueue.add(
-        txnJobName,
-        {
-          poolAddress,
-          startBlock,
-          isLive: true,
-        },
-        { priority: 1 }
-      );
+      const txnJob = await getTxnsFromEtherscanQueue.add(txnJobName, {
+        poolAddress,
+        startBlock,
+        isLive: true,
+      });
 
       // Wait for the triggered txnjob to complete and get the result
       const txnResult = await txnJob.waitUntilFinished(

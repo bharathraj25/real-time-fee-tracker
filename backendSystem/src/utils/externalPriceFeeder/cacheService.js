@@ -3,7 +3,7 @@ const moment = require("moment");
 const { setRedisKey } = require("../../redis");
 const { priceTimestampKeyBuilder } = require("../../redis/keyBuilder");
 
-const REDIS_EXPIRATION = 24 * 60 * 60; // 24 hours
+const REDIS_EXPIRATION = 5 * 60; // 5mins
 
 const roundTimestamp = (timestamp, roundOffFlag) => {
   const date = moment(timestamp);
