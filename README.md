@@ -69,8 +69,8 @@ Make sure the following ports are available:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/bharathraj25/tokka-labs-assignment.git
-   cd tokka-labs-assignment
+   git clone https://github.com/bharathraj25/real-time-fee-tracker.git
+   cd real-time-fee-tracker
    ```
 
 2. **Ensure Docker is running**
