@@ -20,7 +20,7 @@ const retryMechanism = {
 
 const rateLimiter = {
   limiter: {
-    max: 2,
+    max: 5,
     duration: 10000,
   },
 };
