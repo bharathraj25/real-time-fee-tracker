@@ -346,7 +346,7 @@ router
 /**
  * @openapi
  * /api/job/start:
- *   put:
+ *   post:
  *     tags:
  *       - Job
  *     summary: Start a Job
@@ -443,6 +443,6 @@ router
  */
 router
   .route("/start")
-  .put(generateValidationMiddleware(jobSchemaStart), jobController.startJob);
+  .post(generateValidationMiddleware(jobSchemaStart), jobController.startJob);
 
 module.exports = router;
