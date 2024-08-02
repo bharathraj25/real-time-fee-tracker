@@ -120,6 +120,37 @@ Finally, to start collecting transactions of any Uniswap V3 pools, follow these 
   - PostgreSQL: Running on `localhost` & port `5434`
   - Redis: Running on `localhost` & port `6379`
 
+## Testing
+
+This project uses Jest for testing. Jest is a delightful JavaScript testing framework that works well with projects of all sizes.
+
+### Running Tests
+
+To run the tests, follow these steps:
+
+1. Navigate to the `backendSystem` directory:
+    ```bash
+    cd backendSystem
+    ```
+
+2. To run the tests with verbose output, use:
+    ```bash
+    npm run test:verbose
+    ```
+
+3. To run the tests and generate a coverage report, use:
+    ```bash
+    npm run test:coverage
+    ```
+
+### Viewing Coverage Report
+
+Once the coverage report is generated, you can view it by following these steps:
+
+1. The coverage report will be saved in the `coverage` directory.
+2. Open the `coverage/index.html` file in your web browser to view the detailed coverage report.
+
+
 ## Troubleshooting
 
 - **Node.js Errors**: Refer to [Node.js Documentation](https://nodejs.org/en/docs/)
