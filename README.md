@@ -36,6 +36,12 @@ The backend system continuously records live transaction data and processes hist
 - **Etherscan**: Used for retrieving transactions from the Ethereum blockchain.
 - **Moralis**: Utilized for interacting with the blockchain using Web3.js.
 
+## Simple High-Level Architecture
+
+The architecture of this project is designed to be scalable, reliable, and efficient for collecting and processing Uniswap V3 transaction data. Below is a high-level overview of the system:
+
+![Arc Diagram](/arch-diagram.svg)
+
 ## Getting Started
 
 ### Prerequisites
